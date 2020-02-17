@@ -2,6 +2,9 @@
 
 By using this module, you can browse image (OpenCV Mat type) values at real-time, similar to the famous tool "ImageWatch", but this module does not need to enter into any breakpoint at Debug Mode, and images can be viewed directly in real-time when the program is running.
 
+
+![example](example.png)
+
 Currently supports:
 - mouse drag => translate image
 - mouse wheel => scale image
