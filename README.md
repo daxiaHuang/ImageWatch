@@ -1,6 +1,8 @@
-﻿## Project description ##
+﻿﻿## Project description ##
 
-By using this module, you can browse image (OpenCV Mat type) values at real-time, similar to the famous tool "ImageWatch". This module does not need to enter into any breakpoint at bebug mode, and images can be viewed directly in real-time when the program is running.
+By using this module, you can browse image (OpenCV Mat type) values at real-time, similar to the famous tool "ImageWatch". This module does not need to enter into any breakpoint at debug mode, and images can be viewed directly at real-time when the program is running.
+
+Currently, this module only supports c++. In the future, this module possibly will support pyhton.
 
 
 ![example](example.png)
