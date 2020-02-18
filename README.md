@@ -65,6 +65,19 @@ The main interface of the program is defined in the following two files
 - destroy specific window
 - @param win_names [in] name of window
 
+
+
+addition:
+
+1. If you want to view windows in your own UI, just override these functions (Easy to combine with Qt, ...)
+
+- destroy_window
+- named_window
+- resize_window
+- img_show
+- get_window_image_rect
+- set_mouse_callback
+- get_mouse_wheel_delta
 	
 #### emat_visual.hpp -- introduction of primary functions  ####
 

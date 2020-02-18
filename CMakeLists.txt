@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 2.8)
 project(viewer)
 
 set (VERSION_MAJOR 1)
-set (VERSION_MINOR 0)
+set (VERSION_MINOR 1)
 
 # ------ Select the mode (Video Capture or Image) -------
 option (TEST_VIDEO_CAPTURE "Visualize Video Capture" ON)

@@ -18,8 +18,8 @@ int main(int argc, const char** argv)
 		//Get Captured Frame
 		capture >> frame;
 		//Update Window
-		viewer.imshow_cache(win_name, frame, frame, { viewer_text });
-		viewer.imshow(false);
+		viewer.img_show_cache(win_name, frame, frame, { viewer_text });
+		viewer.imgs_show(false);
 		waitKey(10);
 	}
 }

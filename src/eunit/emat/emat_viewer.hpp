@@ -568,17 +568,49 @@ namespace emat {
 			}
 		};
 		mutex m_lock;
-		unordered_map<string, unique_ptr<s_cache_display>> m_cache_display;
+		unordered_map<string, tuple<unique_ptr<s_cache_display>, viewer*>> m_cache_display;
 		u64 m_idx = 0;
-		std::set<string> m_imshow_histroy;
+		std::set<string> m_img_show_histroy;
+	protected:
+		/* if you want to view windows in your own UI, just override these functions (Easy to combine with Qt, ...)*/
+		virtual inline void destroy_window(const string& win_name) {
+			destroyWindow(win_name);
+		}
+
+		virtual inline void named_window(const string& win_name) {
+			namedWindow(win_name, WINDOW_NORMAL);
+		}
+
+		virtual inline void resize_window(const string& win_name, const int& width, const int&height) {
+			resizeWindow(win_name, width, height);
+		}
+
+		virtual inline void img_show(const string& win_name, const Mat& img) {
+			cv::imshow(win_name, img);
+		}
+
+		virtual inline Rect get_window_image_rect(const string& win_name) {
+			return getWindowImageRect(win_name);
+		}
+
+		virtual inline bool is_window_visible(const string& win_name) {
+			return getWindowProperty(win_name, WindowPropertyFlags::WND_PROP_VISIBLE) > 0;
+		}
+
+		virtual inline void set_mouse_callback(const string& win_name,const MouseCallback& callback, void* params) {
+			setMouseCallback(win_name, callback, params);
+		}
+
+		virtual inline int get_mouse_wheel_delta(const int& flag) {
+			return getMouseWheelDelta(flag);
+		}
 	public:
 		~viewer() {
-			destroyAllWindows();
-			m_cache_display.clear();
+			destroy_all();
 		}
 
 		/**
-		cache imshow: window will be updated/shown after call "imshow"
+		cache img_show: window will be updated/shown after call "img_show"
 		@param win_name [in] name of window.
 		@param win_size [in] size of window.
 		@param img_colored [in] image to display (CV_8U3C).
@@ -586,46 +618,48 @@ namespace emat {
 		@param texts [in] texts will be rendered on screen.
 		@return
 		**/
-		void imshow_cache(const string& win_name, const Size& win_size, const Mat& img_colored, const Mat& img_raw, const vector<s_viewer_text>& texts)
+		void img_show_cache(const string& win_name, const Size& win_size, const Mat& img_colored, const Mat& img_raw, const vector<s_viewer_text>& texts)
 		{
 			lock_guard<mutex> lock_(m_lock);
 			assert(img_colored.type() == CV_8UC3);
 			bool use_prev_setting = (m_cache_display.find(win_name) != m_cache_display.end()) &&
-				(m_cache_display[win_name]->m_org_size == img_colored.size());
+				(get<0>(m_cache_display[win_name])->m_org_size == img_colored.size());
 			if (use_prev_setting) {
-				m_cache_display[win_name]->set_win_size(getWindowImageRect(win_name).size());
+				get<0>(m_cache_display[win_name])->set_win_size(get_window_image_rect(win_name).size());
 			}
-			m_cache_display[win_name] = unique_ptr<s_cache_display>(new s_cache_display(
-				win_name,
-				use_prev_setting ? m_cache_display[win_name]->m_win_size : win_size,
-				img_colored,
-				img_raw.total() ? img_raw: Mat::zeros(img_colored.size(), CV_8U),
-				use_prev_setting ? m_cache_display[win_name]->m_center : Point2f((float)img_colored.cols / 2, (float)img_colored.rows / 2),
-				use_prev_setting ? m_cache_display[win_name]->m_scale_factor : 1.f,
-				m_idx,
-				texts,
-				use_prev_setting ? m_cache_display[win_name]->m_tiptool_loc : Point2f(-1.f, -1.f),
-				use_prev_setting ? m_cache_display[win_name]->m_box_en : false));
-			m_cache_display[win_name]->m_tag = (void*)&m_cache_display;
+			m_cache_display[win_name] = tuple<unique_ptr<s_cache_display>, viewer*>(
+				unique_ptr<s_cache_display>(new s_cache_display(
+					win_name,
+					use_prev_setting ? get<0>(m_cache_display[win_name])->m_win_size : win_size,
+					img_colored,
+					img_raw.total() ? img_raw : Mat::zeros(img_colored.size(), CV_8U),
+					use_prev_setting ? get<0>(m_cache_display[win_name])->m_center : Point2f((float)img_colored.cols / 2, (float)img_colored.rows / 2),
+					use_prev_setting ? get<0>(m_cache_display[win_name])->m_scale_factor : 1.f,
+					m_idx,
+					texts,
+					use_prev_setting ? get<0>(m_cache_display[win_name])->m_tiptool_loc : Point2f(-1.f, -1.f),
+					use_prev_setting ? get<0>(m_cache_display[win_name])->m_box_en : false)),
+					(viewer*)this);
+			//get<0>(m_cache_display[win_name])->m_tag = (void*)&m_cache_display;
 		}
 
-		void imshow_cache(const string& win_name, const Mat& img_colored, const Mat& img_raw, const vector<s_viewer_text>& texts)
+		void img_show_cache(const string& win_name, const Mat& img_colored, const Mat& img_raw, const vector<s_viewer_text>& texts)
 		{
-			imshow_cache(win_name, img_colored.size(), img_colored, img_raw, texts);
+			img_show_cache(win_name, img_colored.size(), img_colored, img_raw, texts);
 		}
 
-		void imshow_cache(const string& win_name, const float& scaled, const Mat& img_colored, const Mat& img_raw, const vector<s_viewer_text>& texts)
+		void img_show_cache(const string& win_name, const float& scaled, const Mat& img_colored, const Mat& img_raw, const vector<s_viewer_text>& texts)
 		{
-			imshow_cache(win_name, Size((int)(img_colored.cols * scaled), (int)(img_colored.rows * scaled)), img_colored, img_raw, texts);
+			img_show_cache(win_name, Size((int)(img_colored.cols * scaled), (int)(img_colored.rows * scaled)), img_colored, img_raw, texts);
 		}
 
 		/**
-		get visiable wins
+		get visible wins
 		**/
-		void visiable_wins(vector<string>& win_names) {
+		void visible_wins(vector<string>& win_names) {
 			win_names.clear();
 			for (auto& key : m_cache_display) {
-				if (getWindowProperty(key.first, WindowPropertyFlags::WND_PROP_VISIBLE) > 0) {
+				if (is_window_visible(key.first)) {
 					win_names.emplace_back(key.first);
 				}
 			}
@@ -635,31 +669,45 @@ namespace emat {
 		is windown closed
 		**/
 		bool is_win_closed(const string& win_names) {
-			if (find(m_imshow_histroy.begin(), m_imshow_histroy.end(), win_names) == m_imshow_histroy.end() || getWindowProperty(win_names, WindowPropertyFlags::WND_PROP_VISIBLE) > 0) {
+			if (find(m_img_show_histroy.begin(), m_img_show_histroy.end(), win_names) == m_img_show_histroy.end() || is_window_visible(win_names)) {
 				return false;
 			}
 			return true;
 		}
 
 		/**
-		imshow all images cached
+		remove tiptool 
+		**/
+		void remove_tiptool() {
+			for (auto& key : m_cache_display) {
+				get<0>(key.second)->update_tiptool(Point2f(-1.f, -1.f), false);
+				img_show(get<0>(key.second)->m_win_name, get<0>(key.second)->m_colored_vis_tiptool);
+			}
+		}
+
+		/**
+		img_show all images cached
 		@param reopen_win [in] whether reopen window, when a window is closed by user. 
 		@return
 		**/
-		void imshow(bool reopen_win) {
+		void imgs_show(bool reopen_win) {
 			lock_guard<mutex> lock_(m_lock);
 			for (auto& key : m_cache_display) {
-				auto item = key.second.get();
+				auto& item = get<0>(key.second);
 				if (item->m_idx == m_idx) {
 					if (reopen_win || !is_win_closed(item->m_win_name)) {
-						namedWindow(item->m_win_name, WINDOW_NORMAL);
-						resizeWindow(item->m_win_name, item->m_win_size.width, item->m_win_size.height);
-						cv::imshow(item->m_win_name, item->m_colored_vis_tiptool);
-						m_imshow_histroy.emplace(item->m_win_name);
+						if(!is_window_visible(item->m_win_name)) {
+							named_window(item->m_win_name);
+						}
+						resize_window(item->m_win_name, item->m_win_size.width, item->m_win_size.height);
+						img_show(item->m_win_name, item->m_colored_vis_tiptool);
+						m_img_show_histroy.emplace(item->m_win_name);
 						auto mouse_func = [](int event, int x, int y, int flags, void* param) {
 							static bool mouse_down = false;
 							static Point2f mouse_down_img_loc, mouse_down_img_center;
-							auto item = (s_cache_display*)param;
+							auto p_param = (tuple<unique_ptr<s_cache_display>, viewer*>*)param;
+							auto item = get<0>(*p_param).get();
+							auto father = get<1>(*p_param);
 							bool show_tiptool = false;
 							if (event == EVENT_LBUTTONDOWN) {
 								mouse_down = true;
@@ -680,7 +728,7 @@ namespace emat {
 								int thresholds[] = { 100, 34, 12, 2 };
 								for (auto threshold : thresholds) {
 									if (curr_vis_blocks > threshold || threshold == thresholds[arr_len(thresholds) - 1]) {
-										auto new_scale_factor = (float)max(threshold, curr_vis_blocks + (getMouseWheelDelta(flags) > 0 ? -threshold : threshold)) / item->m_org_size.width;
+										auto new_scale_factor = (float)max(threshold, curr_vis_blocks + (father->get_mouse_wheel_delta(flags) > 0 ? -threshold : threshold)) / item->m_org_size.width;
 										Point mouse(x, y);
 										Point2f anchor_before, anchor_after;
 										item->loc_from_mouse(mouse, anchor_before);
@@ -704,25 +752,30 @@ namespace emat {
 								item->set_box_enable(!item->m_box_en);
 							}
 							if (show_tiptool) {
-								item->set_win_size(getWindowImageRect(item->m_win_name).size());
+								father->remove_tiptool();
+								item->set_win_size(father->get_window_image_rect(item->m_win_name).size());
+								item->update_tiptool(Point2f((float)x, (float)y), false);
+								father->img_show(item->m_win_name, item->m_colored_vis_tiptool);
+								/*
 								for (auto& it : *((unordered_map<string, unique_ptr<s_cache_display>>*)item->m_tag)) {
 									auto& item_iter = it.second;
-									if (getWindowProperty(item_iter->m_win_name, WindowPropertyFlags::WND_PROP_VISIBLE) > 0) {
-										Point2f new_tiptool_loc = (/*item_iter->m_grid_view_mode == false && */item_iter->m_win_name == item->m_win_name) ? Point2f((float)x, (float)y) : Point2f(-1.f, -1.f);
+									if (father->is_window_visible(item_iter->m_win_name)) {
+										Point2f new_tiptool_loc = (item_iter->m_win_name == item->m_win_name) ? Point2f((float)x, (float)y) : Point2f(-1.f, -1.f);
 										item_iter->update_tiptool(new_tiptool_loc, false);
-										cv::imshow(item_iter->m_win_name, item_iter->m_colored_vis_tiptool);
+										father->img_show(item_iter->m_win_name, item_iter->m_colored_vis_tiptool);
 									}
 								}
+								*/
 							}
 						};
-						setMouseCallback(item->m_win_name, mouse_func, (void*)item);
+						set_mouse_callback(item->m_win_name, mouse_func, (void*)&key.second);
 					}
 				}
 				else {
 					if (reopen_win || !is_win_closed(item->m_win_name)) {
-						m_imshow_histroy.erase(key.first);
+						m_img_show_histroy.erase(key.first);
 					}
-					destroyWindow(key.first);
+					destroy_window(key.first);
 					m_cache_display.erase(key.first);
 				}
 			}
@@ -734,9 +787,11 @@ namespace emat {
 		**/
 		void destroy_all() {
 			lock_guard<mutex> lock_(m_lock);
-			destroyAllWindows();
+			for (auto& key : m_cache_display) {
+				destroy_window(get<0>(key.second)->m_win_name);
+			}
 			m_cache_display.clear();
-			m_imshow_histroy.clear();
+			m_img_show_histroy.clear();
 		}
 
 		/**
@@ -744,11 +799,13 @@ namespace emat {
 		**/
 		void destroy(const string& win_name) {
 			lock_guard<mutex> lock_(m_lock);
-			destroyWindow(win_name);
-			m_imshow_histroy.erase(win_name);
+			if (m_cache_display.find(win_name) != m_cache_display.end()) {
+				destroy_window(win_name);
+			}
+			m_img_show_histroy.erase(win_name);
 			m_cache_display.erase(win_name);
 		}
 	};
-}
+};
 
 #endif
