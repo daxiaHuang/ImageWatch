@@ -27,7 +27,7 @@ The main interface of the program is defined in the following two files
 
 #### emat_viewer.hpp -- introduction of primary functions  ####
 
-1. `void imshow_cache(const string& win_name, const Size& win_size, const Mat& img_colored, const Mat& img_raw, const vector<s_viewer_text>& texts)`
+1. `void img_show_cache(const string& win_name, const Size& win_size, const Mat& img_colored, const Mat& img_raw, const vector<s_viewer_text>& texts)`
 
 - cache imshow: window will be updated/shown after call "imshow"
 - @param win_name [in] name of window.
@@ -37,7 +37,7 @@ The main interface of the program is defined in the following two files
 - @param texts [in] texts will be rendered on screen (subtitle)
 - @return
    
-2. `void visiable_wins(vector<string>& win_names)`
+2. `void visible_wins(vector<string>& win_names)`
 
 - get visible windows
 - @param win_names [out] wisible windows
@@ -49,7 +49,7 @@ The main interface of the program is defined in the following two files
 - @param win_names [in] name of window
 - @return
   
-4. `void imshow(bool reopen_win)`
+4. `void imgs_show(bool reopen_win)`
 
 - imshow all images cached
 - @param reopen_win [in] whether reopen window, when a window is closed by user. 
