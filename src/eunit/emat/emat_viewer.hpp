@@ -8,7 +8,7 @@
  *   @internal
  *     Project
  *     Created  1/7/2019
- *    Revision  2/9/2020
+ *    Revision  2/18/2020
  *     Company
  *   Copyright
  *
@@ -23,7 +23,6 @@
 #include <string.h>
 #include <set>
 #include <mutex>
-#include <unordered_map>
 #include "emat_omp.hpp"
 
 using namespace std;
@@ -32,7 +31,7 @@ using namespace std;
 
 namespace emat {
 	/*
-	text can be rendered on window
+	text can be rendered on window (subtitle)
 	*/
 	class s_viewer_text {
 	public:
@@ -756,16 +755,6 @@ namespace emat {
 								item->set_win_size(father->get_window_image_rect(item->m_win_name).size());
 								item->update_tiptool(Point2f((float)x, (float)y), false);
 								father->img_show(item->m_win_name, item->m_colored_vis_tiptool);
-								/*
-								for (auto& it : *((unordered_map<string, unique_ptr<s_cache_display>>*)item->m_tag)) {
-									auto& item_iter = it.second;
-									if (father->is_window_visible(item_iter->m_win_name)) {
-										Point2f new_tiptool_loc = (item_iter->m_win_name == item->m_win_name) ? Point2f((float)x, (float)y) : Point2f(-1.f, -1.f);
-										item_iter->update_tiptool(new_tiptool_loc, false);
-										father->img_show(item_iter->m_win_name, item_iter->m_colored_vis_tiptool);
-									}
-								}
-								*/
 							}
 						};
 						set_mouse_callback(item->m_win_name, mouse_func, (void*)&key.second);

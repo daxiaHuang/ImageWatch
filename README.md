@@ -1,6 +1,6 @@
 ﻿﻿## Project description ##
 
-By using this module, you can browse image (OpenCV Mat type) values at real-time, similar to the famous tool "ImageWatch". This module does not need to enter into any breakpoint at debug mode, and images can be viewed directly at real-time when the program is running.
+By using this module, you can view values of a Mat type variables(OpenCV) in real-time, similar to the famous visual studio plugin tool "ImageWatch". This module does not need to enter into any breakpoint at debug mode, and images can be viewed directly in real-time when the program is running.
 
 Currently, this module only supports c++. In the future, this module possibly will support pyhton.
 
@@ -13,8 +13,8 @@ Currently supports:
 - mouse wheel => scale image
 - use mouse to enlarge image => display values in grid mode
 - mouse hover => display value (Tiptool)
-- left mouse double click => set roi of image to center
-- right mouse click => turn on / turn off global window
+- use left mouse to double click => set roi of image to center
+- use right mouse to click => turn on / turn off global window
 
 
 
@@ -28,11 +28,17 @@ The main interface of the program is defined in the following two files
 - cmake 2.6 +
 - opencv 2.* / 4.*
 
+#### how compile #####
+1. this project relies on OpenCV, make sure you have OpenCV compiled.
+2. compile
+- cmake .
+- make
+
 #### emat_viewer.hpp -- introduction of primary functions  ####
 
 1. `void img_show_cache(const string& win_name, const Size& win_size, const Mat& img_colored, const Mat& img_raw, const vector<s_viewer_text>& texts)`
 
-- cache imshow: window will be updated/shown after call "imshow"
+cache an image: window will be updated/shown after call "imshow"
 - @param win_name [in] name of window.
 - @param win_size [in] size of window.
 - @param img_colored [in] image to display (must be CV_8UC3).
@@ -81,14 +87,15 @@ addition:
 - get_window_image_rect
 - set_mouse_callback
 - get_mouse_wheel_delta
+
 	
 #### emat_visual.hpp -- introduction of primary functions  ####
 
 1. `void vis_gconcat(const vector<Mat>& imgs, const uint32_t& cols, Mat& res)`
 
 - apply grid concat 
-- @param imgs [in] array with Mat type (must be same cv_type)
-- @param cols [in] the max count of images can be put in horizontal direction
+- @param imgs [in] array with Mat type (must be same cv_type, but can be different size)
+- @param cols [in] the max count of images can be put in each colume
 - @param res [out] variable with Mat type (CV_8UC3)
 - @return
 
@@ -96,14 +103,14 @@ addition:
 2. `void vis_vconcat(const vector<Mat>& imgs, Mat& res)`
 
 - apply vertical concat
-- @param imgs [in] array with Mat type (must be same cv_type)
+- @param imgs [in] array with Mat type (must be same cv_type, but can be different size)
 - @param res [out] variable with Mat type (CV_8UC3)
 - @return
 
 3. `void vis_hconcat(const vector<Mat>& imgs, Mat& res)`
 
 - apply horizontal concat
-- @param imgs [in] array with Mat type (must be same cv_type)
+- @param imgs [in] array with Mat type (must be same cv_type, but can be different size)
 - @param res [out] variable with Mat type (CV_8UC3)
 - @return
 
@@ -111,7 +118,7 @@ addition:
 4. `void vis_colormap_jet(const Mat& img, Mat& res)`
 
 - apply COLORMAP_JET
-- @param img [in] variable with Mat type (must be same cv_type)
+- @param img [in] variable with Mat type (must be same cv_type, but can be different size)
 - @param res [out] variable with Mat type (CV_8UC3)
 - @return
 
@@ -119,6 +126,6 @@ addition:
 5. `void vis_gray(const Mat& img, Mat& res)`
 
 - apply normalization
-- @param img [in] variable with Mat type (must be same cv_type)
+- @param img [in] variable with Mat type (must be same cv_type, but can be different size)
 - @param res [out] variable with Mat type (CV_8UC3)
 - @return
