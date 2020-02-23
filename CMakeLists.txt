@@ -5,7 +5,7 @@ project(viewer)
 set (VERSION_MAJOR 1)
 set (VERSION_MINOR 1)
 
-# ------ Select the mode (Video Capture or Image) -------
+# ------ Select what to compile (Video Capture or Image) -------
 option (TEST_VIDEO_CAPTURE "Visualize Video Capture" ON)
 option (TEST_IAMGE "Visualize Image" ON)
 
@@ -49,7 +49,7 @@ if (TEST_VIDEO_CAPTURE)
 	# ------ set compile options -------
 	if  (MSVC)
 	else()
-			target_compile_options(video_capture_viewer PUBLIC -Wall $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++11>)
+		target_compile_options(video_capture_viewer PUBLIC -Wall $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++11>)
 	endif()
 
 	# ------ install -------
@@ -63,7 +63,7 @@ if (TEST_IAMGE)
 	# ------ set compile options -------
 	if  (MSVC)
 	else()
-			target_compile_options(image_viewer PUBLIC -Wall $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++11>)
+		target_compile_options(image_viewer PUBLIC -Wall $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++11>)
 	endif()
 	# ------ install -------
 	install (TARGETS image_viewer DESTINATION .)
