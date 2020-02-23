@@ -1,6 +1,6 @@
-﻿﻿## Project description ##
+## Project description ##
 
-By using this module, you can view values of a Mat type variables(OpenCV) in real-time, similar to the famous visual studio plugin tool "ImageWatch". This module does not need to enter into any breakpoint at debug mode, and images can be viewed directly in real-time when the program is running.
+By using this module, you can view values of a Mat type variable(OpenCV) in real-time, similar to the famous visual studio plugin tool "ImageWatch". This module does not need to enter into any breakpoint at debug mode, and images can be viewed directly in real-time when the program is running.
 
 Currently, this module only supports c++. In the future, this module possibly will support pyhton.
 
@@ -38,7 +38,7 @@ The main interface of the program is defined in the following two files
 
 1. `void img_show_cache(const string& win_name, const Size& win_size, const Mat& img_colored, const Mat& img_raw, const vector<s_viewer_text>& texts)`
 
-cache an image: window will be updated/shown after call "imshow"
+- cache an image: window will be updated/shown after call "imshow"
 - @param win_name [in] name of window.
 - @param win_size [in] size of window.
 - @param img_colored [in] image to display (must be CV_8UC3).
