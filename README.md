@@ -26,7 +26,7 @@ The main interface of the program is defined in the following two files
 #### dependencies  ####
 - GCC 5.4
 - cmake 2.6 +
-- opencv 2.* / 4.*
+- opencv 3.* / 4.*
 
 #### how compile #####
 1. this project relies on OpenCV, make sure you have OpenCV compiled.
