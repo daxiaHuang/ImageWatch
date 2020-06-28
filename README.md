@@ -1,5 +1,7 @@
 ## Project description ##
 
+https://blog.csdn.net/weixin_39576203/article/details/104368800
+
 By using this module, you can view values of a Mat type variable(OpenCV) in real-time, similar to the famous visual studio plugin tool "ImageWatch". This module does not need to enter into any breakpoint at debug mode, and images can be viewed directly in real-time when the program is running.
 
 Currently, this module only supports c++. In the future, this module possibly will support pyhton.
